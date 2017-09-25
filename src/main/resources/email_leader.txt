@@ -1,0 +1,19 @@
+Selamat…
+
+Team Anda telah melakukan penjualan melalui TMConnect dengan informasi sebagai berikut:
+
+Nama Financial Consultant	:	<FC name>
+Kode Financial Consultant	:	<FC code>
+No. E-SPAJ	                :	<E-SPAJ number>
+Nama Produk	                :	<product name>
+Nama Pemegang Polis	        :	<policyholder name>
+Nama Tertanggung            :   <insured name>
+Frekuensi Pembayaran Premi	:	<frequency of premium>
+Premi Reguler	            :	<regular premium>
+Premi Reguler Top-Up	    :	<regular top up>
+Premi Total	                :	<reguler total>
+
+Demikian kami sampaikan. Kami mengucapkan terima kasih atas kerjasama Anda yang baik.
+
+Hormat kami
+PT Tokio Marine Life Insurance Indonesia

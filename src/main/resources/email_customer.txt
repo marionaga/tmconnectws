@@ -1,0 +1,27 @@
+Dengan Hormat,
+
+Kami mengucapkan terima kasih atas kepercayaan yang diberikan untuk pengajuan aplikasi asuransi elektronik (E-SPAJ) PT Tokio Marine Life Insurance Indonesia.
+
+Terlampir adalah dokumen Ilustrasi Asuransi dan E-SPAJ dengan data sebagai berikut:
+
+No. Ilustrasi Asuransi          : <E-Ilustrasi number>
+Tanggal Ilustrasi Asuransi	    : <E-Ilustrasi date>
+No. E-SPAJ	                    : <E-SPAJ number>
+Tanggal E-SPAJ	                : <E-SPAJ date>
+Nama Produk	                    : <product name>
+Nama Tertanggung                : <insured name>
+
+Sebagai upaya kami untuk menjaga kerahasian data, silahkan gunakan 6 (enam digit) kata sandi untuk membuka dokumen Ilustrasi Asuransi dan E-SPAJ dengan format 2 (dua) digit tanggal lahir Pemegang Polis 2 (dua) digit bulan lahir Pemegang Polis 2 (dua) digit terakhir no. Ilustrasi Asuransi atau no. E-SPAJ.
+
+Contoh kata sandi untuk E-SPAJ  :
+Tanggal Lahir Pemegang Polis    : 17 Maret 1981
+Kata Sandi                      : 170381
+
+Saat ini aplikasi <Bapak/Ibu> telah diajukan untuk proses Underwriting, apabila memerlukan informasi lebih lanjut maka Financial Consultant kami akan menghubungi <Bapak/Ibu>.
+
+Sebagai informasi bahwa aplikasi ini akan menjadi efektif setelah mendapat persetujuan dari Underwriting dan pembayaran Premi pertama sudah diterima lunas oleh PT Tokio Marine Life Insurance Indonesia. dan konfirmasi penerimaan email dari <Bapak/Ibu>.
+
+Apabila <Bapak/Ibu> memerlukan penjelasan lebih lanjut, mohon hubungi <FC Name>, HP: <FC’s HP number> selaku Financial Consultant yang terdaftar di PT Tokio Marine Life Insurance Indonesia.
+
+Hormat kami,
+PT Tokio Marine Life Insurance Indonesia

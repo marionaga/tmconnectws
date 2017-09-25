@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+    <context:annotation-config/>
+
+    <bean
+            class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
+    <bean
+            class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
+
+    <context:component-scan base-package="com.id.tmli.intranet"/>
+
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath:db.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="dataSourceIntranet" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${db.intranet.driverClassName}"/>
+        <property name="url" value="${db.intranet.url}"/>
+        <property name="username" value="${db.intranet.username}"/>
+        <property name="password" value="${db.intranet.password}"/>
+        <property name="initialSize" value="100"/>
+        <property name="maxActive" value="500"/>
+        <property name="maxIdle" value="100"/>
+        <property name="minIdle" value="50"/>
+        <property name="timeBetweenEvictionRunsMillis" value="340000"/>
+        <property name="minEvictableIdleTimeMillis" value="55000"/>
+        <property name="validationQuery" value="SELECT 1"/>
+        <property name="testOnBorrow" value="true"/>
+        <property name="removeAbandoned" value="true"/>
+        <property name="removeAbandonedTimeout" value="233"/>
+    </bean>
+
+    <!--<tx:annotation-driven transaction-manager="transactionManagerIntranet"/>-->
+
+    <bean id="transactionManagerIntranet" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+
+        <property name="dataSource" ref="dataSourceIntranet" />
+        <qualifier value="transactionManagerIntranet"/>
+    </bean>
+
+    <bean id="sessionFactoryIntranet"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSourceIntranet"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</prop>
+                <prop key="hibernate.current_session_context_class">thread</prop>
+                <prop key="hibernate.show_sql">true</prop>
+            </props>
+        </property>
+        <property name="annotatedClasses">
+            <list>
+                <value>com.id.tmli.intranet.model.data.intranet.DailySubmission</value>
+                <value>com.id.tmli.intranet.model.data.intranet.Agent</value>
+                <value>com.id.tmli.intranet.model.data.intranet.Branch</value>
+                <value>com.id.tmli.intranet.model.data.intranet.DailySubmissionLog</value>
+                <value>com.id.tmli.intranet.model.data.intranet.DailySubmissionReceivePolicy</value>
+                <value>com.id.tmli.intranet.model.data.intranet.Product</value>
+                <value>com.id.tmli.intranet.model.data.intranet.Currency</value>
+                <value>com.id.tmli.intranet.model.data.intranet.StateSpaj</value>
+                <value>com.id.tmli.intranet.model.data.intranet.DailySubmissionRemark</value>
+                <value>com.id.tmli.intranet.model.data.intranet.AppCodeSpaj</value>
+                <value>com.id.tmli.intranet.model.data.intranet.DistCodeSpaj</value>
+                <value>com.id.tmli.intranet.model.data.intranet.GenerateNumberSpaj</value>
+                <value>com.id.tmli.intranet.model.data.intranet.NumberAppSpaj</value>
+                <value>com.id.tmli.intranet.model.data.intranet.TSmsBroadcast</value>
+                <value>com.id.tmli.intranet.model.data.intranet.TBranchTMConnect</value>
+                <value>com.id.tmli.intranet.model.data.intranet.SystemParameter</value>
+                <value>com.id.tmli.intranet.model.data.intranet.CoverageComp</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="dataSourceDocsubmit" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${db.docsubmit.driverClassName}"/>
+        <property name="url" value="${db.docsubmit.url}"/>
+        <property name="username" value="${db.docsubmit.username}"/>
+        <property name="password" value="${db.docsubmit.password}"/>
+        <property name="initialSize" value="100"/>
+        <property name="maxActive" value="500"/>
+        <property name="maxIdle" value="100"/>
+        <property name="minIdle" value="50"/>
+        <property name="timeBetweenEvictionRunsMillis" value="340000"/>
+        <property name="minEvictableIdleTimeMillis" value="55000"/>
+        <property name="validationQuery" value="SELECT 1"/>
+        <property name="testOnBorrow" value="true"/>
+        <property name="removeAbandoned" value="true"/>
+        <property name="removeAbandonedTimeout" value="233"/>
+    </bean>
+
+
+
+    <bean id="sessionFactoryDocsubmit"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSourceDocsubmit"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                <prop key="hibernate.current_session_context_class">thread</prop>
+                <prop key="hibernate.show_sql">true</prop>
+            </props>
+        </property>
+        <property name="annotatedClasses">
+            <list>
+                <value>com.id.tmli.intranet.model.data.docsubmit.UploadsNewsDtr</value>
+            </list>
+        </property>
+    </bean>
+
+    <!--<tx:annotation-driven transaction-manager="transactionManagerDocsubmit"/>-->
+
+    <bean id="transactionManagerDocsubmit" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+
+        <property name="dataSource" ref="dataSourceDocsubmit" />
+        <qualifier value="transactionManagerDocsubmit"/>
+    </bean>
+
+    <bean id="dataSourceCallidus" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${db.callidus.driverClassName}"/>
+        <property name="url" value="${db.callidus.url}"/>
+        <property name="username" value="${db.callidus.username}"/>
+        <property name="password" value="${db.callidus.password}"/>
+        <property name="initialSize" value="100"/>
+        <property name="maxActive" value="500"/>
+        <property name="maxIdle" value="100"/>
+        <property name="minIdle" value="50"/>
+        <property name="timeBetweenEvictionRunsMillis" value="340000"/>
+        <property name="minEvictableIdleTimeMillis" value="55000"/>
+        <property name="validationQuery" value="SELECT 1"/>
+        <property name="testOnBorrow" value="true"/>
+        <property name="removeAbandoned" value="true"/>
+        <property name="removeAbandonedTimeout" value="233"/>
+    </bean>
+
+    <bean id="sessionFactoryCallidus"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSourceCallidus"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</prop>
+                <prop key="hibernate.current_session_context_class">thread</prop>
+                <prop key="hibernate.show_sql">true</prop>
+            </props>
+        </property>
+        <property name="annotatedClasses">
+            <list>
+                <value>com.id.tmli.intranet.model.data.callidus.AgentProfile</value>
+            </list>
+        </property>
+    </bean>
+    <!--<tx:annotation-driven transaction-manager="transactionManagerCallidus"/>-->
+
+    <bean id="transactionManagerCallidus" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+
+        <property name="dataSource" ref="dataSourceCallidus" />
+        <qualifier value="transactionManagerCallidus"/>
+    </bean>
+
+    <bean id="intranetDao" class="com.id.tmli.intranet.dao.impl.IntranetDaoImpl"/>
+    <bean id="docsubmitDao" class="com.id.tmli.intranet.dao.impl.DocsubmitDaoImpl"/>
+    <bean id="callidusDao" class="com.id.tmli.intranet.dao.impl.CallidusDaoImpl"/>
+
+</beans>
