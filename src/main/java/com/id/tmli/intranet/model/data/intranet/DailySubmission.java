@@ -139,7 +139,7 @@ public class DailySubmission extends BaseEntity {
     private DailySubmissionReceivePolicy dailySubmissionReceivePolicy;*/
 
 
-    @OneToOne(mappedBy="submission",optional=false, cascade=CascadeType.ALL)
+    @OneToOne(mappedBy = "submission", optional = false, cascade = CascadeType.ALL)
     private DailySubmissionReceivePolicy dailySubmissionReceivePolicy;
 
     public String getPolicyHolder() {

@@ -14,7 +14,6 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -39,21 +38,26 @@ public class IntranetDaoImpl implements IntranetDao {
 
     final static Logger log = Logger.getLogger(IntranetDaoImpl.class);
 
-    @Transactional(value = "transactionManagerIntranet",rollbackFor = Exception.class, propagation = Propagation.MANDATORY)
+    final DailySubmissionLog logSubmit = new DailySubmissionLog();
+    final DailySubmissionReceivePolicy policySubmit = new DailySubmissionReceivePolicy();
+    final SendMailServiceImpl sendNotif = new SendMailServiceImpl();
+    final UploadsNewsDtr uploadsInsertData = new UploadsNewsDtr();
+    final TSmsBroadcast sendSMS = new TSmsBroadcast();
+    final PropertyConfig pc = new PropertyConfig();
+    /*final static Session sessionSqlServer = SessionUtilDTRSqlServer.getSession();
+    final static Session sessionMysql = SessionUtilMySQL.getSession();
+    final static Session sessionCallidus = SessionUtilCallidusSqlServer.getSession();*/
+
+
+    @Transactional(value = "transactionManagerIntranet",rollbackFor = Exception.class)
     @Override
     public String addSubmissionDao(DailySubmission dailySubmission, UploadsNewsDtr uploadDTR, NumberAppSpaj generateNumberSpaj, DailySubmissionForm bean) throws Exception {
-        DailySubmissionLog logSubmit = new DailySubmissionLog();
-        UploadsNewsDtr uploadsInsertData = new UploadsNewsDtr();
-        DailySubmissionReceivePolicy policySubmit = new DailySubmissionReceivePolicy();
-        SendMailServiceImpl sendNotif = new SendMailServiceImpl();
         Session sessionIntranet = sessionFactoryIntranet.openSession();
         Session sessionDocsubmit = sessionFactoryDocsubmit.openSession();
-        PropertyConfig pc = new PropertyConfig();
         String result = "";
-        /*Transaction txSqlServer = sessionSqlServer.beginTransaction();
-        Transaction txMysql = sessionMysql.beginTransaction();*/
-        Transaction txIntranet = sessionIntranet.beginTransaction();
-        Transaction txDocsubmit = sessionDocsubmit.beginTransaction();
+        Transaction txSqlServer = sessionIntranet.beginTransaction();
+        Transaction txMysql = sessionDocsubmit.beginTransaction();
+
 
 
         try {
@@ -71,9 +75,11 @@ public class IntranetDaoImpl implements IntranetDao {
             sessionIntranet.flush();
             log.info("**** END INSERT T_DAILYSUBMIT ****");
             log.info("id : " + dailySubmission.getId());
+
             log.info("**** START INSERT T_DAILYSUBMIT_POLICY ****");
             policySubmit.setSubmission(dailySubmission);
             sessionIntranet.persist(policySubmit);
+            sessionIntranet.flush();
             log.info("**** END INSERT T_DAILYSUBMIT_POLICY ****");
 //
             logSubmit.setSubmission(dailySubmission);
@@ -81,9 +87,19 @@ public class IntranetDaoImpl implements IntranetDao {
             logSubmit.setCreateUser(dailySubmission.getCreateUser());
             logSubmit.setState(new StateSpaj());
             logSubmit.getState().setId("3");
+
             log.info("**** START INSERT T_DAILYSUBMIT_LOG ****");
             sessionIntranet.persist(logSubmit);
+            sessionIntranet.flush();
             log.info("**** END INSERT T_DAILYSUBMIT_LOG ****");
+
+            System.out.println("**** START INSERT VA Number ****");
+            sessionIntranet.persist(generateNumberSpaj);
+            sessionIntranet.flush();
+            System.out.println("**** END INSERT VA Number ****");
+
+
+            txSqlServer.commit();
 
             /* Insert SPAJ Docsubmit*/
             uploadsInsertData.setTglUpload(new Date());
@@ -109,26 +125,17 @@ public class IntranetDaoImpl implements IntranetDao {
 
             System.out.println("**** START INSERT FILE DTR ****");
             sessionDocsubmit.persist(uploadsInsertData);
-            System.out.println("**** END INSERT FILE DTR ****");
             sessionDocsubmit.flush();
+            System.out.println("**** END INSERT FILE DTR ****");
 
-            System.out.println("**** START INSERT VA Number ****");
-            sessionIntranet.persist(generateNumberSpaj);
-            System.out.println("**** END INSERT VA Number ****");
-            sessionIntranet.flush();
+            txMysql.commit();
 
-            txDocsubmit.commit();
-            txIntranet.commit();
-
-            sessionIntranet.evict(policySubmit);
-            sessionIntranet.evict(dailySubmission);
             result = "OK";
 
         } catch (Exception e) {
 
-            txDocsubmit.rollback();
-            txIntranet.rollback();
-
+            txSqlServer.rollback();
+            txMysql.rollback();
             log.error("Error addSubmissionDao database : " + e.getMessage());
             String title = "Error System ";
 
@@ -154,10 +161,6 @@ public class IntranetDaoImpl implements IntranetDao {
     @Transactional(value = "transactionManagerIntranet",rollbackFor= Exception.class)
     @Override
     public void addSMSBroadcastPhone(TSmsBroadcast sms) {
-
-        SendMailServiceImpl sendNotif = new SendMailServiceImpl();
-
-        PropertyConfig pc = new PropertyConfig();
 
         Session sessionIntranet = sessionFactoryIntranet.openSession();
 
@@ -212,11 +215,6 @@ public class IntranetDaoImpl implements IntranetDao {
     @Transactional(value = "transactionManagerIntranet",rollbackFor= Exception.class)
     @Override
     public int getCountSpajDailySubmit(String spajNo) {
-
-        SendMailServiceImpl sendNotif = new SendMailServiceImpl();
-
-        PropertyConfig pc = new PropertyConfig();
-
         Session sessionIntranet = sessionFactoryIntranet.openSession();
         log.info("Count spaj Daily submit");
         int totalCount = 0;
@@ -247,11 +245,6 @@ public class IntranetDaoImpl implements IntranetDao {
     @Transactional(value = "transactionManagerIntranet",rollbackFor = Exception.class)
     @Override
     public Product getProductFromProductCode(String productCode) {
-
-        SendMailServiceImpl sendNotif = new SendMailServiceImpl();
-
-        PropertyConfig pc = new PropertyConfig();
-
         Session sessionIntranet = sessionFactoryIntranet.openSession();
         Product product = null;
         try {
@@ -281,11 +274,6 @@ public class IntranetDaoImpl implements IntranetDao {
     @Transactional(value = "transactionManagerIntranet",rollbackFor= Exception.class)
     @Override
     public TBranchTMConnect getBranchCode(String officeCode) {
-
-        SendMailServiceImpl sendNotif = new SendMailServiceImpl();
-
-        PropertyConfig pc = new PropertyConfig();
-
         Session sessionIntranet = sessionFactoryIntranet.openSession();
 
         TBranchTMConnect tBranchTMConnect = null;
@@ -316,11 +304,6 @@ public class IntranetDaoImpl implements IntranetDao {
     @Transactional(value = "transactionManagerIntranet",rollbackFor= Exception.class)
     @Override
     public Branch getBranchFromBranchId(String branchCode) {
-
-        SendMailServiceImpl sendNotif = new SendMailServiceImpl();
-
-        PropertyConfig pc = new PropertyConfig();
-
         Session sessionIntranet = sessionFactoryIntranet.openSession();
         log.info("Tbranch BranchCode Input : " + branchCode);
         Branch branch = null;
@@ -352,11 +335,6 @@ public class IntranetDaoImpl implements IntranetDao {
     @Transactional(value = "transactionManagerIntranet",rollbackFor= Exception.class)
     @Override
     public Currency getCurrencyFromCurrencyCode(String currencyCode) {
-
-        SendMailServiceImpl sendNotif = new SendMailServiceImpl();
-
-        PropertyConfig pc = new PropertyConfig();
-
         Session sessionIntranet = sessionFactoryIntranet.openSession();
         Currency currency = null;
         try {
@@ -386,11 +364,6 @@ public class IntranetDaoImpl implements IntranetDao {
     @Transactional(value = "transactionManagerIntranet",rollbackFor= Exception.class)
     @Override
     public Long getIdTmConnect() {
-
-        SendMailServiceImpl sendNotif = new SendMailServiceImpl();
-
-        PropertyConfig pc = new PropertyConfig();
-
         Long resultId;
         Session sessionIntranet = sessionFactoryIntranet.openSession();
         GenerateNumberSpaj idTMConnect = null;
@@ -421,11 +394,6 @@ public class IntranetDaoImpl implements IntranetDao {
     @Transactional(value = "transactionManagerIntranet",rollbackFor= Exception.class)
     @Override
     public int getCountNumberApplication(String spajNo) {
-
-        SendMailServiceImpl sendNotif = new SendMailServiceImpl();
-
-        PropertyConfig pc = new PropertyConfig();
-
         Session sessionIntranet = sessionFactoryIntranet.openSession();
         log.info("Count Number Application");
         int totalCount = 0;
@@ -458,11 +426,6 @@ public class IntranetDaoImpl implements IntranetDao {
     @Transactional(value = "transactionManagerIntranet",rollbackFor = Exception.class)
     @Override
     public Agent getAgentFromAgentCode(String agentCode) {
-
-        SendMailServiceImpl sendNotif = new SendMailServiceImpl();
-
-        PropertyConfig pc = new PropertyConfig();
-
         Session sessionIntranet = sessionFactoryIntranet.openSession();
         Agent agent = null;
         try {
